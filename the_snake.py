@@ -41,8 +41,11 @@ pygame.display.set_caption('Змейка')
 # Настройка времени:
 clock = pygame.time.Clock()
 
+# Создание шрифта для отображения текста:
 
 # Тут опишите все классы игры.
+
+
 class GameObject:
     """Родительский класс игровых объектов."""
 
@@ -51,11 +54,13 @@ class GameObject:
         self.position = ((SCREEN_WIDTH // 2), (SCREEN_HEIGHT // 2))
         self.body_color = body_color
 
-    def paint_cell(self, position, surface):
+    def paint_cell(self, position, surface, background_color=None):
+        """Метод для отрисовки ячеек игровой поверхности"""
         rect = pygame.Rect(position, (GRID_SIZE, GRID_SIZE))
-
         pygame.draw.rect(surface, self.body_color, rect)
         pygame.draw.rect(surface, BORDER_COLOR, rect, 1)
+        if background_color:
+            pygame.draw.rect(surface, background_color, rect)
 
     def draw(self):
         """Метод для отрисовки игровых объектов."""
@@ -113,8 +118,7 @@ class Snake (GameObject):
         """Метод для отрисовки змейки."""
         self.paint_cell(self.get_head_position(), surface)
         if self.last:
-            last_rect = pygame.Rect(self.last, (GRID_SIZE, GRID_SIZE))
-            pygame.draw.rect(surface, BOARD_BACKGROUND_COLOR, last_rect)
+            self.paint_cell(self.last, surface, BOARD_BACKGROUND_COLOR)
 
     def reset(self):
         """Метод для сброса змейки при возобновлении игры."""
@@ -160,7 +164,7 @@ def main():
             apple.randomize_position(snake)
             apple.draw()
 
-        if snake.get_head_position() in snake.positions[1:]:
+        if snake.get_head_position() in snake.positions[1:] or snake.get_head_position() == snake.last:
             screen.fill(BOARD_BACKGROUND_COLOR)
             snake.reset()
             apple.draw()
