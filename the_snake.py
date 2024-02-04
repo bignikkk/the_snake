@@ -36,12 +36,10 @@ SPEED = 15
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
 
 # Заголовок окна игрового поля:
-pygame.display.set_caption('Змейка')
+pygame.display.set_caption('Игра "Змейка". Для выхода нажмите ESC.')
 
 # Настройка времени:
 clock = pygame.time.Clock()
-
-# Создание шрифта для отображения текста:
 
 # Тут опишите все классы игры.
 
@@ -107,8 +105,10 @@ class Snake (GameObject):
     def move(self):
         """Метод, обновляющий позицию змейки."""
         head_x, head_y = self.get_head_position()
-        self.positions.insert(0, ((head_x + self.direction[0] * GRID_SIZE) %
-                              SCREEN_WIDTH, (head_y + self.direction[1] * GRID_SIZE) % SCREEN_HEIGHT))
+        self.positions.insert(0, ((head_x + self.direction[0]
+                                   * GRID_SIZE) % SCREEN_WIDTH,
+                                  (head_y + self.direction[1]
+                                   * GRID_SIZE) % SCREEN_HEIGHT))
         if len(self.positions) > self.length:
             self.last = self.positions.pop()
         else:
@@ -163,8 +163,8 @@ def main():
             snake.length += 1
             apple.randomize_position(snake)
             apple.draw()
-
-        if snake.get_head_position() in snake.positions[1:] or snake.get_head_position() == snake.last:
+        if snake.get_head_position() in snake.positions[1:] or \
+                snake.get_head_position() == snake.last:
             screen.fill(BOARD_BACKGROUND_COLOR)
             snake.reset()
             apple.draw()
