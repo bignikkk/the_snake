@@ -1,9 +1,9 @@
 """Импорт модулей, использованных в коде."""
-from random import choice, randint
+import sys
 
 import pygame
 
-import sys
+from random import choice, randint
 
 # Константы для размеров поля и сетки:
 SCREEN_WIDTH, SCREEN_HEIGHT = 640, 480
@@ -52,13 +52,13 @@ class GameObject:
         self.position = ((SCREEN_WIDTH // 2), (SCREEN_HEIGHT // 2))
         self.body_color = body_color
 
-    def paint_cell(self, position, surface, background_color=None):
+    def paint_cell(self, position, background_color=None):
         """Метод для отрисовки ячеек игровой поверхности"""
         rect = pygame.Rect(position, (GRID_SIZE, GRID_SIZE))
-        pygame.draw.rect(surface, self.body_color, rect)
-        pygame.draw.rect(surface, BORDER_COLOR, rect, 1)
+        pygame.draw.rect(screen, self.body_color, rect)
+        pygame.draw.rect(screen, BORDER_COLOR, rect, 1)
         if background_color:
-            pygame.draw.rect(surface, background_color, rect)
+            pygame.draw.rect(screen, background_color, rect)
 
     def draw(self):
         """Метод для отрисовки игровых объектов."""
@@ -79,9 +79,9 @@ class Apple(GameObject):
             self.position = (randint(0, GRID_WIDTH - 1) * GRID_SIZE,
                              randint(0, GRID_HEIGHT - 1) * GRID_SIZE)
 
-    def draw(self, surface=screen):
+    def draw(self):
         """Метод для отрисовки яблока."""
-        self.paint_cell(self.position, surface)
+        self.paint_cell(self.position)
 
 
 class Snake (GameObject):
@@ -91,6 +91,7 @@ class Snake (GameObject):
         """Конструктор дочернего класса, создающий змейку."""
         super().__init__(body_color)
         self.reset()
+        self.last = None
 
     def update_direction(self):
         """Метод, обновляющий направления движения змейки."""
@@ -114,19 +115,19 @@ class Snake (GameObject):
         else:
             self.last = None
 
-    def draw(self, surface=screen):
+    def draw(self):
         """Метод для отрисовки змейки."""
-        self.paint_cell(self.get_head_position(), surface)
+        self.paint_cell(self.get_head_position())
         if self.last:
-            self.paint_cell(self.last, surface, BOARD_BACKGROUND_COLOR)
+            self.paint_cell(self.last, BOARD_BACKGROUND_COLOR)
 
     def reset(self):
         """Метод для сброса змейки при возобновлении игры."""
         self.length = 1
         self.positions = [self.position]
         self.direction = choice([RIGHT, LEFT, UP, DOWN])
-        self.last = None
         self.next_direction = None
+        self.last = None
 
 
 def handle_keys(game_object):
@@ -163,16 +164,17 @@ def main():
             snake.length += 1
             apple.randomize_position(snake)
             apple.draw()
-        if snake.get_head_position() in snake.positions[1:] or \
-                snake.get_head_position() == snake.last:
+
+        if snake.get_head_position() in snake.positions[1:]:
             screen.fill(BOARD_BACKGROUND_COLOR)
             snake.reset()
             apple.draw()
 
+        snake.move()
         snake.draw()
         handle_keys(snake)
         snake.update_direction()
-        snake.move()
+
         pygame.display.update()
 
 
