@@ -1,9 +1,8 @@
 """Импорт модулей, использованных в коде."""
 import sys
+from random import choice, randint
 
 import pygame
-
-from random import choice, randint
 
 # Константы для размеров поля и сетки:
 SCREEN_WIDTH, SCREEN_HEIGHT = 640, 480
@@ -165,7 +164,8 @@ def main():
             apple.randomize_position(snake)
             apple.draw()
 
-        if snake.get_head_position() in snake.positions[1:]:
+        if (snake.get_head_position() in snake.positions[1:]
+                or snake.get_head_position() == snake.last):
             screen.fill(BOARD_BACKGROUND_COLOR)
             snake.reset()
             apple.draw()
